@@ -3,8 +3,8 @@
     "modList":
     [
         {
-          "modid": "modname",
-          "name": "Mod Name",
+          "modid": "townmanager",
+          "name": "Town Manager",
           "description": "",
           "version": "${version}",
           "mcversion": "${mcversion}",
