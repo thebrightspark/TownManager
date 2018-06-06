@@ -1,5 +1,6 @@
-package brightspark.townmanager;
+package brightspark.townmanager.handlers;
 
+import brightspark.townmanager.TownManager;
 import brightspark.townmanager.messages.CheckForClientModMessage;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.Mod;
@@ -16,7 +17,7 @@ public class EventHandler
     public static void onClientJoin(PlayerEvent.PlayerLoggedInEvent event)
     {
         //Find out if the client has the mod installed
-        NetworkManager.NETWORK.sendTo(new CheckForClientModMessage(), (EntityPlayerMP) event.player);
+        NetworkHandler.NETWORK.sendTo(new CheckForClientModMessage(), (EntityPlayerMP) event.player);
     }
 
     @SideOnly(Side.SERVER)
@@ -24,6 +25,6 @@ public class EventHandler
     public static void onClientLeave(PlayerEvent.PlayerLoggedOutEvent event)
     {
         //Remove the client
-        NetworkManager.removeClient((EntityPlayerMP) event.player);
+        NetworkHandler.removeClient((EntityPlayerMP) event.player);
     }
 }

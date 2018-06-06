@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class Town implements INBTSerializable<NBTTagCompound>
+public class Town implements INBTSerializable<NBTTagCompound>, Named
 {
     private String name;
     private UUID owner;

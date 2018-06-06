@@ -1,5 +1,6 @@
-package brightspark.townmanager;
+package brightspark.townmanager.handlers;
 
+import brightspark.townmanager.TownManager;
 import brightspark.townmanager.messages.CheckForClientModMessage;
 import brightspark.townmanager.messages.ConnectionMessage;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -13,7 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.HashSet;
 import java.util.Set;
 
-public class NetworkManager
+public class NetworkHandler
 {
     public static SimpleNetworkWrapper NETWORK;
     private static int discriminator = 0;

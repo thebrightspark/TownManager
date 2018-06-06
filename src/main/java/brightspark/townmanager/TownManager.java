@@ -1,5 +1,7 @@
 package brightspark.townmanager;
 
+import brightspark.townmanager.commands.CommandTM;
+import brightspark.townmanager.handlers.NetworkHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -25,13 +27,13 @@ public class TownManager
     public void preInit(FMLPreInitializationEvent event)
     {
         LOGGER = event.getModLog();
-        NetworkManager.init();
+        NetworkHandler.init();
     }
 
     @EventHandler
     public void serverStarting(FMLServerStartingEvent event)
     {
-        //TODO: Add commands
+        event.registerServerCommand(new CommandTM());
     }
 
     @NetworkCheckHandler
@@ -39,8 +41,8 @@ public class TownManager
     {
         if(side.isServer())
         {
-            NetworkManager.canSendToServer = modList.containsKey(MOD_ID);
-            LOGGER.info("Server side mod " + (NetworkManager.canSendToServer ? "exists" : "does not exist"));
+            NetworkHandler.canSendToServer = modList.containsKey(MOD_ID);
+            LOGGER.info("Server side mod " + (NetworkHandler.canSendToServer ? "exists" : "does not exist"));
         }
         return true;
     }

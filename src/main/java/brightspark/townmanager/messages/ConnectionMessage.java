@@ -1,6 +1,6 @@
 package brightspark.townmanager.messages;
 
-import brightspark.townmanager.NetworkManager;
+import brightspark.townmanager.handlers.NetworkHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -46,9 +46,9 @@ public class ConnectionMessage implements IMessage
         {
             EntityPlayerMP player = ctx.getServerHandler().player.getServer().getPlayerList().getPlayerByUUID(message.uuid);
             if(message.add)
-                NetworkManager.addClient(player);
+                NetworkHandler.addClient(player);
             else
-                NetworkManager.removeClient(player);
+                NetworkHandler.removeClient(player);
             return null;
         }
     }

@@ -1,4 +1,4 @@
-package brightspark.townmanager.data;
+package brightspark.townmanager.handlers;
 
 import brightspark.townmanager.TownManager;
 import com.google.common.cache.Cache;
