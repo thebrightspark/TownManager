@@ -1,6 +1,6 @@
 package brightspark.townmanager.util;
 
-import brightspark.townmanager.data.Named;
+import brightspark.townmanager.data.AreaBase;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -43,7 +43,7 @@ public class Utils
      * @param <T> The type of values in the list (must implement Named)
      * @return The ITextComponent
      */
-    public static <T extends Named> ITextComponent createPagedListText(List<T> list, int page, int maxPerPage)
+    public static <T extends AreaBase> ITextComponent createPagedListText(List<T> list, int page, int maxPerPage)
     {
         return createPagedListText(getPageOfList(list, page, maxPerPage));
     }
@@ -54,7 +54,7 @@ public class Utils
      * @param <T> The type of values in the list (must implement Named)
      * @return The ITextComponent
      */
-    public static <T extends Named> ITextComponent createPagedListText(ListPage<T> page)
+    public static <T extends AreaBase> ITextComponent createPagedListText(ListPage<T> page)
     {
         ITextComponent component = new TextComponentString(TextFormatting.YELLOW + " ========== ");
         ITextComponent title = new TextComponentTranslation("tm.command.generic.pageTitle",
@@ -77,9 +77,21 @@ public class Utils
      */
     public static String joinCommandArgs(String[] args, int start)
     {
+        return joinCommandArgs(args, start, args.length);
+    }
+
+    /**
+     * Joins together the given Strings in the array into one String where each value is separated by a space
+     * @param args Command arguments
+     * @param start Index to start from (go till the end of the array)
+     * @param end Index to end at
+     * @return The combined String
+     */
+    public static String joinCommandArgs(String[] args, int start, int end)
+    {
         StringBuilder sb = new StringBuilder();
-        for(int i = start; i < args.length; i++)
-            sb.append(i);
+        for(int i = start; i < end; i++)
+            sb.append(args[i]);
         return sb.toString();
     }
 }

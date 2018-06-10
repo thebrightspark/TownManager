@@ -1,6 +1,8 @@
 package brightspark.townmanager.handlers;
 
 import brightspark.townmanager.TownManager;
+import brightspark.townmanager.messages.AreaUpdateAllMessage;
+import brightspark.townmanager.messages.AreaUpdateMessage;
 import brightspark.townmanager.messages.CheckForClientModMessage;
 import brightspark.townmanager.messages.ConnectionMessage;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -29,6 +31,8 @@ public class NetworkHandler
         NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(TownManager.MOD_ID);
         regMessage(CheckForClientModMessage.Handler.class, CheckForClientModMessage.class, Side.CLIENT);
         regMessage(ConnectionMessage.Handler.class, ConnectionMessage.class, Side.SERVER);
+        regMessage(AreaUpdateAllMessage.Handler.class, AreaUpdateAllMessage.class, Side.CLIENT);
+        regMessage(AreaUpdateMessage.Handler.class, AreaUpdateMessage.class, Side.CLIENT);
     }
 
     // +-------------+

@@ -1,5 +1,6 @@
 package brightspark.townmanager.messages;
 
+import brightspark.townmanager.data.AreasData;
 import brightspark.townmanager.handlers.NetworkHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -39,14 +40,17 @@ public class ConnectionMessage implements IMessage
         buf.writeLong(uuid.getLeastSignificantBits());
     }
 
-    public static class Handler implements IMessageHandler<ConnectionMessage, IMessage>
+    public static class Handler implements IMessageHandler<ConnectionMessage, AreaUpdateAllMessage>
     {
         @Override
-        public IMessage onMessage(ConnectionMessage message, MessageContext ctx)
+        public AreaUpdateAllMessage onMessage(ConnectionMessage message, MessageContext ctx)
         {
             EntityPlayerMP player = ctx.getServerHandler().player.getServer().getPlayerList().getPlayerByUUID(message.uuid);
             if(message.add)
+            {
                 NetworkHandler.addClient(player);
+                return new AreaUpdateAllMessage(AreasData.get(player.world));
+            }
             else
                 NetworkHandler.removeClient(player);
             return null;

@@ -1,10 +1,13 @@
 package brightspark.townmanager.data;
 
 import brightspark.townmanager.TownManager;
+import brightspark.townmanager.handlers.NetworkHandler;
+import brightspark.townmanager.messages.AreaUpdateMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.MapStorage;
@@ -12,8 +15,10 @@ import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class AreasData extends WorldSavedData
 {
@@ -45,20 +50,20 @@ public class AreasData extends WorldSavedData
 
     public static Set<Town> getAllTowns(MinecraftServer server)
     {
-        Set<Town> towns = new HashSet<>();
+        Set<Town> allTowns = new HashSet<>();
         for(WorldServer world : server.worlds)
-            towns.addAll(get(world).getTowns());
-        return towns;
+            allTowns.addAll(get(world).getTowns());
+        return allTowns;
     }
 
     public static Set<Town> getAllTownsContaining(MinecraftServer server, String name)
     {
-        Set<Town> towns = new HashSet<>();
+        Set<Town> townsWithName = new HashSet<>();
         for(WorldServer world : server.worlds)
             for(Town town : get(world).getTowns())
                 if(town.getName().contains(name))
-                    towns.add(town);
-        return towns;
+                    townsWithName.add(town);
+        return townsWithName;
     }
 
     public static Set<Plot> getPlotsForPlayer(MinecraftServer server, EntityPlayer player)
@@ -73,6 +78,11 @@ public class AreasData extends WorldSavedData
         return plots;
     }
 
+    public Set<Town> getTownsContainingPos(BlockPos pos)
+    {
+        return towns.stream().filter(town -> town.areaContainsPos(pos)).collect(Collectors.toSet());
+    }
+
     public Set<Town> getTowns()
     {
         return towns;
@@ -80,7 +90,10 @@ public class AreasData extends WorldSavedData
 
     public boolean addTown(Town town)
     {
-        return towns.add(town);
+        boolean success = towns.add(town);
+        if(success)
+            NetworkHandler.sendToClients(new AreaUpdateMessage(town, true));
+        return success;
     }
 
     public Town getTown(String name)
@@ -93,7 +106,27 @@ public class AreasData extends WorldSavedData
 
     public boolean deleteTown(String name)
     {
-        return towns.removeIf(town -> town.getName().equals(name));
+        boolean deleted = false;
+        Iterator<Town> townsIter = towns.iterator();
+        while(townsIter.hasNext())
+        {
+            Town town = townsIter.next();
+            if(town.getName().equals(name))
+            {
+                NetworkHandler.sendToClients(new AreaUpdateMessage(town, false));
+                townsIter.remove();
+                deleted = true;
+            }
+        }
+        return deleted;
+    }
+
+    public static boolean deleteTown(MinecraftServer server, String name)
+    {
+        for(WorldServer world : server.worlds)
+            if(get(world).deleteTown(name))
+                return true;
+        return false;
     }
 
     @Override

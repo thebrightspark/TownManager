@@ -1,6 +1,5 @@
 package brightspark.townmanager.commands;
 
-import brightspark.townmanager.TownManager;
 import brightspark.townmanager.data.AreasData;
 import brightspark.townmanager.data.Town;
 import brightspark.townmanager.util.Utils;
@@ -32,7 +31,7 @@ public class CommandTowns extends CommandBase
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return TownManager.MOD_ID + ".command.towns.usage";
+        return "tm.command.towns.usage";
     }
 
     @Override

@@ -1,59 +1,28 @@
 package brightspark.townmanager.data;
 
+import brightspark.townmanager.handlers.NetworkHandler;
+import brightspark.townmanager.messages.AreaUpdateMessage;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
-public class Town implements INBTSerializable<NBTTagCompound>, Named
+public class Town extends AreaBase
 {
-    private String name;
-    private UUID owner;
-    private Set<UUID> members = new HashSet<>();
     private Set<Plot> plots = new HashSet<>();
 
-    public Town(String name)
+    public Town(String name, UUID owner, Area area)
     {
-        this.name = name;
+        super(name, owner, area);
     }
 
     public Town(NBTTagCompound nbt)
     {
-        deserializeNBT(nbt);
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public UUID getOwner()
-    {
-        return owner;
-    }
-
-    public void setOwner(UUID uuid)
-    {
-        owner = uuid;
-    }
-
-    public Set<UUID> getMembers()
-    {
-        return members;
-    }
-
-    public boolean addMember(UUID uuid)
-    {
-        return members.add(uuid);
-    }
-
-    public boolean removeMember(UUID uuid)
-    {
-        return members.remove(uuid);
+        super(nbt);
     }
 
     public Set<Plot> getPlots()
@@ -76,47 +45,50 @@ public class Town implements INBTSerializable<NBTTagCompound>, Named
 
     public boolean removePlot(String plotName)
     {
-        return plots.removeIf(plot -> plot.getName().equals(plotName));
+        boolean removed = false;
+        Iterator<Plot> plotsIter = plots.iterator();
+        while(plotsIter.hasNext())
+        {
+            Plot plot = plotsIter.next();
+            if(plot.getName().equals(plotName))
+            {
+                NetworkHandler.sendToClients(new AreaUpdateMessage(plot, false));
+                plotsIter.remove();
+                removed = true;
+            }
+        }
+        return removed;
     }
 
-    @Override
-    public boolean equals(Object obj)
+    public boolean setPlot(Plot plot)
     {
-        return obj instanceof Town && ((Town) obj).getName().equals(name);
+        Plot existing = getPlot(plot.getName());
+        if(existing != null)
+            removePlot(existing.getName());
+        return addPlot(plot);
     }
 
     @Override
     public NBTTagCompound serializeNBT()
     {
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("name", name);
-        nbt.setUniqueId("owner", owner);
-
-        NBTTagList memberList = new NBTTagList();
-        members.forEach(member -> {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setUniqueId("uuid", member);
-            memberList.appendTag(tag);
-        });
-        nbt.setTag("members", memberList);
-
+        NBTTagCompound nbt = super.serializeNBT();
         NBTTagList plotList = new NBTTagList();
         plots.forEach(plot -> plotList.appendTag(plot.serializeNBT()));
         nbt.setTag("plots", plotList);
-
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt)
     {
-        name = nbt.getString("name");
-        owner = nbt.getUniqueId("owner");
-
-        NBTTagList memberList = nbt.getTagList("members", Constants.NBT.TAG_COMPOUND);
-        memberList.forEach(tag -> members.add(((NBTTagCompound) tag).getUniqueId("uuid")));
-
+        super.deserializeNBT(nbt);
         NBTTagList plotList = nbt.getTagList("plots", Constants.NBT.TAG_COMPOUND);
         plotList.forEach(tag -> plots.add(new Plot((NBTTagCompound) tag)));
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return obj instanceof Town && super.equals(obj);
     }
 }

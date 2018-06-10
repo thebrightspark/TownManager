@@ -1,6 +1,5 @@
 package brightspark.townmanager.commands;
 
-import brightspark.townmanager.TownManager;
 import brightspark.townmanager.data.AreasData;
 import brightspark.townmanager.data.Plot;
 import brightspark.townmanager.util.Utils;
@@ -34,7 +33,7 @@ public class CommandPlots extends CommandBase
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return TownManager.MOD_ID + ".command.plots.usage";
+        return "tm.command.plots.usage";
     }
 
     @Override
