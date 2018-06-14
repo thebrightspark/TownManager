@@ -56,7 +56,7 @@ public class Utils
      */
     public static <T extends AreaBase> ITextComponent createPagedListText(ListPage<T> page)
     {
-        ITextComponent component = new TextComponentString(TextFormatting.YELLOW + " ========== ");
+        ITextComponent component = new TextComponentString(TextFormatting.YELLOW + "========== ");
         ITextComponent title = new TextComponentTranslation("tm.command.generic.pageTitle",
                 page.getPageNum() + 1, page.getPageMax() + 1);
         title.getStyle().setColor(TextFormatting.GOLD);

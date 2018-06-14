@@ -8,6 +8,7 @@ import brightspark.townmanager.data.Town;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
 import java.util.UUID;
@@ -71,8 +72,6 @@ public class AreaAction
             return EnumActionResult.PASS;
         }
 
-        //TODO: Send message to player depending on result!
-
         UUID uuid = player.getUniqueID();
         boolean result = false;
         switch(action)
@@ -87,6 +86,10 @@ public class AreaAction
                 TownManager.LOGGER.warn("Action has set its second position, but its current action is %s!", action);
         }
         AreaHandler.removeAction(uuid);
+
+        //Send message to player depending on result
+        getPlayer().sendMessage(new TextComponentTranslation("tm.action." + action.langName() + (result ? "success" : "failed"), areaName));
+
         return result ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
     }
 }
